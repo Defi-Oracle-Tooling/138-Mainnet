@@ -1,0 +1,34 @@
+{
+  "name": "138-mainnet-configurator",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@web3auth/modal": "^7.0.0",
+    "@tensorflow/tfjs": "^4.10.0",
+    "three": "^0.156.0",
+    "ethers": "^6.7.0",
+    "web3": "^4.1.0",
+    "next": "13.4.19",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "tailwindcss": "^3.3.3",
+    "@babylonjs/core": "^6.14.0",
+    "@tensorflow-models/handpose": "^0.1.0",
+    "ipfs-http-client": "^60.0.0",
+    "@web3auth/web3auth": "^2.1.3",
+    "@babylonjs/loaders": "^5.0.0",
+    "multicall-client": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "@types/react": "18.2.21",
+    "@types/three": "^0.155.1",
+    "hardhat": "^2.17.1"
+  }
+}

@@ -1,0 +1,25 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: Bash@3
+    displayName: "Deploy Besu Nodes"
+    inputs:
+      targetType: 'inline'
+      script: |
+        az container create --resource-group besu-rg --name besu-node \
+          --image hyperledger/besu:latest --cpu 2 --memory 4 \
+          --ports 30303 8545 --os-type Linux
+
+  - task: Bash@3
+    displayName: "Deploy Smart Contracts"
+    inputs:
+      targetType: 'inline'
+      script: |
+        npm install -g truffle
+        truffle migrate --network besu

@@ -1,0 +1,25 @@
+name: Deploy Smart Contracts
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy_contracts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y nodejs npm
+          npm install -g truffle
+
+      - name: Deploy CCIP Smart Contract
+        run: |
+          cd contracts
+          truffle migrate --network besu --reset

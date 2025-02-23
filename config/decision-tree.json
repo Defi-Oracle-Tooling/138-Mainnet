@@ -1,0 +1,63 @@
+{
+    "networkType": {
+        "question": "What type of consensus mechanism do you need?",
+        "options": {
+            "IBFT2": {
+                "description": "Byzantine Fault Tolerant consensus for private networks",
+                "requirements": {
+                    "minValidators": 4,
+                    "blockTime": 2,
+                    "epochLength": 30000
+                }
+            },
+            "QBFT": {
+                "description": "Enhanced BFT consensus with improved performance",
+                "requirements": {
+                    "minValidators": 4,
+                    "blockTime": 2,
+                    "epochLength": 30000
+                }
+            },
+            "Clique": {
+                "description": "Proof of Authority consensus",
+                "requirements": {
+                    "minSigners": 1,
+                    "blockPeriod": 15
+                }
+            }
+        }
+    },
+    "plugins": {
+        "question": "Which plugins do you need?",
+        "options": {
+            "privacy": {
+                "description": "Enable private transactions",
+                "dependencies": ["Orion or Tessera"]
+            },
+            "metrics": {
+                "description": "Enable Prometheus metrics",
+                "dependencies": ["Prometheus", "Grafana"]
+            },
+            "traces": {
+                "description": "Enable transaction tracing",
+                "dependencies": []
+            }
+        }
+    },
+    "hyperledgerProducts": {
+        "compatible": {
+            "Fabric": {
+                "description": "Use with Besu for private channels",
+                "integration": "Via Hyperledger FireFly"
+            },
+            "Cactus": {
+                "description": "Interoperability framework",
+                "integration": "Native integration"
+            },
+            "FireFly": {
+                "description": "Web3 super node",
+                "integration": "Native support"
+            }
+        }
+    }
+}

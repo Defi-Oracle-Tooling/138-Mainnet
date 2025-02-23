@@ -1,0 +1,87 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowDefinition.json",
+        "actions": {
+            "Generate_Config": {
+                "type": "Function",
+                "inputs": {
+                    "functionName": "besuConfigGenerator",
+                    "parameters": {
+                        "networkType": "@parameters('networkType')",
+                        "plugins": "@parameters('enabledPlugins')"
+                    }
+                }
+            },
+            "Deploy_Besu_Node": {
+                "type": "Http",
+                "dependsOn": ["Generate_Config"],
+                "inputs": {
+                    "method": "POST",
+                    "uri": "https://management.azure.com/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.ContainerInstance/containerGroups/{container-name}?api-version=2019-12-01",
+                    "body": {
+                        "location": "eastus",
+                        "properties": {
+                            "containers": [
+                                {
+                                    "name": "besu-node",
+                                    "properties": {
+                                        "image": "hyperledger/besu:@{parameters('besuVersion')}",
+                                        "ports": [{ "port": 30303 }, { "port": 8545 }],
+                                        "resources": { "requests": { "memoryInGB": 2, "cpu": 1 } },
+                                        "volumeMounts": [
+                                            {
+                                                "name": "config",
+                                                "mountPath": "/config"
+                                            },
+                                            {
+                                                "name": "plugins",
+                                                "mountPath": "/opt/besu/plugins"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "osType": "Linux"
+                        }
+                    },
+                    "headers": { "Content-Type": "application/json" }
+                }
+            },
+            "Install_Plugins": {
+                "type": "Http",
+                "runAfter": ["Deploy_Besu_Node"],
+                "foreach": "@parameters('enabledPlugins')",
+                "inputs": {
+                    "method": "POST",
+                    "uri": "@{parameters('vmEndpoint')}/api/plugins/install",
+                    "body": {
+                        "pluginName": "@{items()}"
+                    }
+                }
+            }
+        },
+        "triggers": {
+            "Manual_Trigger": {
+                "type": "Request",
+                "inputs": {
+                    "method": "POST",
+                    "schema": {}
+                }
+            }
+        },
+        "parameters": {
+            "networkType": {
+                "type": "string",
+                "defaultValue": "ibft2"
+            },
+            "enabledPlugins": {
+                "type": "array",
+                "defaultValue": ["metrics", "traces"]
+            },
+            "besuVersion": {
+                "type": "string",
+                "defaultValue": "latest"
+            }
+        }
+    }
+}

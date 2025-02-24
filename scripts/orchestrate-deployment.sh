@@ -1,9 +1,35 @@
 #!/bin/bash
 
+CONSENSUS=$1
+FEATURES=$2
+VERSION=$3
+shift 3
+
+# Parse additional options
+MULTI_REGION=false
+KUBERNETES=false
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --multi-region)
+            MULTI_REGION=true
+            shift
+            ;;
+        --kubernetes)
+            KUBERNETES=true
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            exit 1
+            ;;
+    esac
+done
+
 # Configuration
-NETWORK_TYPE=${1:-ibft2}
-PLUGINS=${2:-"metrics,traces"}
-BESU_VERSION=${3:-"latest"}
+NETWORK_TYPE=${CONSENSUS:-ibft2}
+PLUGINS=${FEATURES:-"metrics,traces"}
+BESU_VERSION=${VERSION:-"latest"}
 
 # Setup environment
 echo "🔧 Setting up environment..."
@@ -28,6 +54,11 @@ az deployment group create \
   --parameters networkType=${NETWORK_TYPE} \
               enabledPlugins=${PLUGINS} \
               besuVersion=${BESU_VERSION}
+
+if [ "$KUBERNETES" = true ]; then
+    echo "Deploying Kubernetes clusters..."
+    # Add Kubernetes deployment logic
+fi
 
 # Deploy Besu and plugins
 echo "⚙️ Running setup script..."

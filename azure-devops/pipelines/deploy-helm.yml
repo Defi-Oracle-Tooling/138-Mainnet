@@ -1,0 +1,37 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - 'helm/**'
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  aksResourceGroup: 'besu-rg'
+  aksClusterName: 'besu-cluster'
+
+stages:
+  - stage: DeployCharts
+    jobs:
+      - job: DeployBesuNodes
+        steps:
+          - task: HelmInstaller@1
+            inputs:
+              helmVersionToInstall: 'latest'
+
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'Azure-Connection'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az aks get-credentials \
+                  --resource-group $(aksResourceGroup) \
+                  --name $(aksClusterName)
+                
+                helm upgrade --install besu ./helm/besu \
+                  --namespace besu \
+                  --create-namespace

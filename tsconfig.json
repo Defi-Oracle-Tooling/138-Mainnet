@@ -13,7 +13,23 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "outDir": "./dist",
+    "checkJs": false
   },
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.js",
+    "config/**/*.js",
+    "defender/**/*.js",
+    "scripts/**/*.js",
+    "next.config.js",
+    "packages/**/dist"
+  ],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }

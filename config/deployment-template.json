@@ -1,0 +1,18 @@
+{
+  "deployment": {
+    "type": "kubernetes",
+    "provider": "multi-cloud",
+    "consensus": "ibft2",
+    "features": ["metrics", "traces"],
+    "multiTenant": {
+      "enabled": true,
+      "components": ["firefly", "cacti"]
+    },
+    "kubernetes": {
+      "regions": {
+        "aws": ["us-east-1", "eu-west-1"],
+        "azure": ["eastus", "westeurope"]
+      }
+    }
+  }
+}

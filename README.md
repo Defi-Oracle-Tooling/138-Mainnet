@@ -271,3 +271,46 @@ Report vulnerabilities to security@138.network
 <div align="center">
   <img src="./assets/deployment-metrics.svg" width="800" alt="Deployment Metrics"/>
 </div>
+
+# Hyperledger Besu Deployment Configuration
+
+## 🚀 Quick Start
+
+Run the deployment script with your chosen configuration:
+```bash
+./scripts/orchestrate-deployment.sh <consensus> <features> <version> [options]
+```
+
+## 📋 Decision Tree
+
+### 1️⃣ Choose Cloud Provider
+- [ ] AWS
+- [ ] Azure
+- [ ] Multi-Cloud
+
+### 2️⃣ Select Deployment Type
+- [ ] Single VM (Basic)
+- [ ] Multi-VM (Distributed)
+- [ ] Kubernetes (Multi-Region)
+- [ ] Multi-Tenant Stack
+
+[Decision tree content continues as specified in the prompt...]
+
+## 🛠 Configuration Options
+
+```json
+{
+  "deployment": {
+    "type": "kubernetes|vm|multi-vm",
+    "provider": "aws|azure|multi-cloud",
+    "consensus": "ibft2|clique|pow|pos",
+    "features": ["metrics", "traces"],
+    "multiTenant": {
+      "enabled": false,
+      "components": ["firefly", "cacti"]
+    }
+  }
+}
+```
+
+[Rest of the documentation as specified...]

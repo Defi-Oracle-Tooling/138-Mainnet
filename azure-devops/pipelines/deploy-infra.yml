@@ -1,0 +1,42 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - 'bicep/**'
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  resourceGroupName: 'besu-rg'
+  location: 'eastus'
+
+stages:
+  - stage: ValidateBicep
+    jobs:
+      - job: ValidateTemplates
+        steps:
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'Azure-Connection'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az bicep build --file bicep/main.bicep
+
+  - stage: DeployInfrastructure
+    jobs:
+      - job: DeployAzureResources
+        steps:
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'Azure-Connection'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az deployment group create \
+                  --resource-group $(resourceGroupName) \
+                  --template-file bicep/main.bicep \
+                  --parameters location=$(location)

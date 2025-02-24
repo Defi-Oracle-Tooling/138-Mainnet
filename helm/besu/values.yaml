@@ -1,0 +1,27 @@
+replicaCount: 4
+
+image:
+  repository: hyperledger/besu
+  tag: latest
+  pullPolicy: IfNotPresent
+
+resources:
+  limits:
+    cpu: 2
+    memory: 4Gi
+  requests:
+    cpu: 1
+    memory: 2Gi
+
+service:
+  type: ClusterIP
+  port: 8545
+
+persistence:
+  enabled: true
+  size: 50Gi
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: "nginx"

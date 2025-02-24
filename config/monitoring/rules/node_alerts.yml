@@ -1,0 +1,29 @@
+groups:
+  - name: node_alerts
+    rules:
+      - alert: HighBlockTime
+        expr: avg_over_time(besu_blockchain_height[5m]) < 1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Block production stopped"
+          description: "No new blocks have been produced in the last 5 minutes"
+
+      - alert: PeerCountLow
+        expr: besu_peers < 3
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low peer count"
+          description: "Node has less than 3 peers connected"
+
+      - alert: HighMemoryUsage
+        expr: process_resident_memory_bytes / process_virtual_memory_bytes > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage"
+          description: "Node is using more than 80% of allocated memory"

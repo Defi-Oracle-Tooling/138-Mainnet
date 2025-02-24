@@ -2,93 +2,75 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
+
+env:
+  CONTRACTS_FOLDER: './contracts'
+  FRONTEND_FOLDER: './frontend'
+  SAFE_ADDRESS: ${{ secrets.SAFE_ADDRESS }}
+  SAFE_SERVICE_URL: ${{ secrets.SAFE_SERVICE_URL }}
+  RPC_URL: ${{ secrets.RPC_URL }}
+  DEPLOYER_KEY: ${{ secrets.DEPLOYER_KEY }}
+  CONTRACT_ADDRESS: ${{ secrets.CONTRACT_ADDRESS }}
 
 jobs:
-  check-changes:
-    runs-on: ubuntu-latest
-    outputs:
-      contracts: ${{ steps.filter.outputs.contracts }}
-      frontend: ${{ steps.filter.outputs.frontend }}
-    steps:
-      - uses: actions/checkout@v3
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            contracts:
-              - 'packages/contracts/**'
-            frontend:
-              - 'packages/web3auth/**'
-              - 'apps/**'
-
   build-and-test:
-    needs: check-changes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: recursive
       
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'pnpm'
+          node-version: '16'
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Install Dependencies
+        run: |
+          cd $CONTRACTS_FOLDER
+          npm install
+          cd ../$FRONTEND_FOLDER
+          npm install
 
-      - name: Build packages
-        run: pnpm run build
+      - name: Run Tests
+        run: |
+          cd $CONTRACTS_FOLDER
+          npm test
+          cd ../$FRONTEND_FOLDER
+          npm test
 
-      - name: Run tests
-        run: pnpm run test
-
-  prepare-deployment:
+  deploy:
     needs: build-and-test
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    environment: production
-    env:
-      SAFE_ADDRESS: ${{ vars.SAFE_ADDRESS }}
-      SAFE_SERVICE_URL: ${{ vars.SAFE_SERVICE_URL }}
-      RPC_URL: ${{ secrets.RPC_URL }}
-      DEPLOYER_KEY: ${{ secrets.DEPLOYER_KEY }}
-    
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          
-      - name: Install dependencies
+          node-version: '16'
+
+      - name: Deploy Contracts
         run: |
-          npm install @safe-global/safe-core-sdk
-          npm install @safe-global/api-kit
-          npm install ethers@5.7.2
-          
-      - name: Prepare Safe Transaction
+          cd $CONTRACTS_FOLDER
+          npm install
+          npx hardhat deploy --network mainnet \
+            --safe-address ${{ env.SAFE_ADDRESS }} \
+            --safe-service-url ${{ env.SAFE_SERVICE_URL }} \
+            --rpc-url ${{ env.RPC_URL }} \
+            --private-key ${{ env.DEPLOYER_KEY }}
+
+      - name: Build Frontend
         run: |
-          curl -X POST "${SAFE_SERVICE_URL}/api/v1/safes/${SAFE_ADDRESS}/multisig-transactions/" \
-            -H "Content-Type: application/json" \
-            -d @- << EOF
-            {
-              "safe": "$SAFE_ADDRESS",
-              "to": "${{ vars.CONTRACT_ADDRESS }}",
-              "value": "0",
-              "data": null,
-              "operation": 0,
-              "safeTxGas": 0,
-              "baseGas": 0,
-              "gasPrice": 0,
-              "nonce": null
-            }
-          EOF
+          cd $FRONTEND_FOLDER
+          npm install
+          npm run build
           
-      - name: Create Deployment Proposal
-        run: node scripts/create-safe-proposal.js
+      - name: Deploy Frontend
+        env:
+          CONTRACT_ADDRESS: ${{ env.CONTRACT_ADDRESS }}
+        run: |
+          cd $FRONTEND_FOLDER
+          npm run deploy

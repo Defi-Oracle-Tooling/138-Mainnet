@@ -1,0 +1,17 @@
+{
+  "name": "@config-tool/backend",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "express": "^4.18.0",
+    "cors": "^2.8.5",
+    "mongoose": "^7.4.0",
+    "jsonwebtoken": "^9.0.0",
+    "python-shell": "^5.0.0",
+    "terraform-generator": "^5.0.0"
+  },
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "test": "jest"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "name": "138 Network",
+  "chain": "138",
+  "icon": "138",
+  "rpc": [
+    "https://rpc.138.network"
+  ],
+  "features": [
+    {
+      "name": "EIP155"
+    },
+    {
+      "name": "EIP1559"
+    }
+  ],
+  "faucets": [],
+  "nativeCurrency": {
+    "name": "Ether",
+    "symbol": "ETH",
+    "decimals": 18
+  },
+  "infoURL": "https://138.network",
+  "shortName": "138",
+  "chainId": 138,
+  "networkId": 138,
+  "slip44": 60,
+  "explorers": [
+    {
+      "name": "138 Network Explorer",
+      "url": "https://explorer.138.network",
+      "standard": "EIP3091"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      contracts: ${{ steps.filter.outputs.contracts }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            contracts:
+              - 'packages/contracts/**'
+            frontend:
+              - 'packages/web3auth/**'
+              - 'apps/**'
+
+  build-and-test:
+    needs: check-changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: pnpm run build
+
+      - name: Run tests
+        run: pnpm run test
+
+  prepare-deployment:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      SAFE_ADDRESS: ${{ vars.SAFE_ADDRESS }}
+      SAFE_SERVICE_URL: ${{ vars.SAFE_SERVICE_URL }}
+      RPC_URL: ${{ secrets.RPC_URL }}
+      DEPLOYER_KEY: ${{ secrets.DEPLOYER_KEY }}
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: |
+          npm install @safe-global/safe-core-sdk
+          npm install @safe-global/api-kit
+          npm install ethers@5.7.2
+          
+      - name: Prepare Safe Transaction
+        run: |
+          curl -X POST "${SAFE_SERVICE_URL}/api/v1/safes/${SAFE_ADDRESS}/multisig-transactions/" \
+            -H "Content-Type: application/json" \
+            -d @- << EOF
+            {
+              "safe": "$SAFE_ADDRESS",
+              "to": "${{ vars.CONTRACT_ADDRESS }}",
+              "value": "0",
+              "data": null,
+              "operation": 0,
+              "safeTxGas": 0,
+              "baseGas": 0,
+              "gasPrice": 0,
+              "nonce": null
+            }
+          EOF
+          
+      - name: Create Deployment Proposal
+        run: node scripts/create-safe-proposal.js

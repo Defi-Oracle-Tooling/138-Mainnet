@@ -30,6 +30,7 @@ npm run dev
 - Frontend: Next.js, Three.js, TailwindCSS
 - Blockchain: Hyperledger Besu, Web3.js, Ethers.js
 - Authentication: Web3Auth
+- Zero-Knowledge: Hyperledger Identus, PolygonID, Dock Labs SDK
 - Gesture Recognition: TensorFlow.js
 - 3D Graphics: Three.js + Babylon.js
 
@@ -40,6 +41,9 @@ Create a `.env.local` file with:
 ```
 NEXT_PUBLIC_WEB3AUTH_CLIENT_ID=
 NEXT_PUBLIC_RPC_URL=
+DOCK_API_KEY=
+POLYGON_ID_CONTRACT=
+IDENTUS_VERIFIER_KEY=
 ```
 
 ## Architecture
@@ -135,6 +139,20 @@ Choose from pre-built modules:
 - 💱 Token Standards
 - 🤝 Multi-sig Wallets
 - 🔄 Cross-chain Bridges
+
+## Zero-Knowledge Integration
+
+The platform supports zero-knowledge proofs through:
+- Hyperledger Identus for claim generation
+- PolygonID for proof verification
+- Dock Labs SDK for anchoring and storage
+
+```typescript
+// Generate and verify ZK proofs
+const zkModule = new ZKModule(config);
+const proof = await zkModule.generateProof(claim);
+const isValid = await zkModule.verifyProof(proof);
+```
 
 ## Real-Time Modifications
 

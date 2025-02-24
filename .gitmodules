@@ -1,0 +1,15 @@
+[submodule "packages/core"]
+    path = packages/core
+    url = git@github.com:138-Mainnet/core.git
+[submodule "packages/contracts"]
+    path = packages/contracts
+    url = git@github.com:138-Mainnet/contracts.git
+[submodule "packages/web3auth"]
+    path = packages/web3auth
+    url = git@github.com:138-Mainnet/web3auth.git
+[submodule "packages/gesture-control"]
+    path = packages/gesture-control
+    url = git@github.com:138-Mainnet/gesture-control.git
+[submodule "packages/network-viz"]
+    path = packages/network-viz
+    url = git@github.com:138-Mainnet/network-viz.git

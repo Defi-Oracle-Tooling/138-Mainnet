@@ -28,5 +28,3 @@ export const encryptionConfig = {
   ivLength: 16,
   saltLength: 64
 };
-
-

@@ -1,13 +1,13 @@
 import { Web3AuthNoModal } from "@web3auth/no-modal";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
-import { CHAIN_NAMESPACES, CustomChainConfig } from "@web3auth/base";
-import { SUPPORTED_CHAINS } from "../packages/auth/src/provider";
+import { CHAIN_NAMESPACES, CustomChainConfig, } from "@web3auth/base";
+import { SUPPORTED_CHAINS } from "../../packages/auth/src/provider";
 
 const DEFAULT_CHAIN_ID = '137'; // Polygon
 const chainConfig: CustomChainConfig = {
   chainNamespace: CHAIN_NAMESPACES.EIP155,
-  ...SUPPORTED_CHAINS[DEFAULT_CHAIN_ID]
+  ...SUPPORTED_CHAINS[DEFAULT_CHAIN_ID],
 };
 
 export const web3authConfig = {

@@ -113,15 +113,17 @@ export class Web3AuthProvider {
         ...(config.rpcUrl ? { rpcTarget: config.rpcUrl } : {})
       };
 
-      const { blockExplorerUrl, ...chainConfigRest } = chainConfig;
+      const { blockExplorerUrl, chainNamespace, ...chainConfigRest } = chainConfig;
       const privateKeyProvider = new EthereumPrivateKeyProvider({
         config: { 
-          chainConfig: { 
+          chainConfig: {
             ...chainConfigRest,
+            // Ensure required properties are provided
             blockExplorer: blockExplorerUrl || '',
-            displayName: chainConfigRest.displayName || 'Unknown Network',
-            ticker: chainConfigRest.ticker || 'ETH',
-            tickerName: chainConfigRest.tickerName || 'Ethereum',
+            displayName: SUPPORTED_CHAINS[config.chainId].displayName,
+            ticker: SUPPORTED_CHAINS[config.chainId].ticker,
+            tickerName: SUPPORTED_CHAINS[config.chainId].tickerName,
+            decimals: 18
           }
         }
       });

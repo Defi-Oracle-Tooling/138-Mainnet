@@ -34,7 +34,7 @@
     "datastore-core": "^9.1.1",
     "ethers": "^6.7.0",
     "helia": "^2.0.1",
-    "next": "13.4.19",
+    "next": "13.5.8",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "^3.3.3",
